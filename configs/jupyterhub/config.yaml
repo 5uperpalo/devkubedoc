@@ -16,8 +16,8 @@ proxy:
 hub:
   config:
     GitHubOAuthenticator:
-      client_id: Iv1.c8da9b15fffe7811
-      client_secret: fe07f27dad974ba5b6a3cd90a464fe6bbffbbc81
+      client_id: XXX
+      client_secret: XXX
       oauth_callback_url: https://sai-jupyterhub.cttc.es/hub/oauth_callback
       allowed_organizations:
         - sai-cttc

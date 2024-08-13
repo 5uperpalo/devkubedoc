@@ -1,0 +1,91 @@
+singleuser:
+  storage:
+    capacity: 10Gi
+    dynamic:
+      storageClass: nfs
+proxy:
+  https:
+    enabled: True
+    hosts: 
+      - sai-jupyterhub.cttc.es
+    type: secret
+    secret:
+      name: jupyterhub-tls
+  service:
+    loadBalancerIP: 10.1.24.200
+hub:
+  config:
+    GitHubOAuthenticator:
+      client_id: Iv1.c8da9b15fffe7811
+      client_secret: fe07f27dad974ba5b6a3cd90a464fe6bbffbbc81
+      oauth_callback_url: https://sai-jupyterhub.cttc.es/hub/oauth_callback
+      allowed_organizations:
+        - sai-cttc
+      scope:
+        - read:org
+    JupyterHub:
+      authenticator_class: github    
+  extraConfig:
+    spawner_config: |
+      c.JupyterHub.allow_named_servers = True
+      c.JupyterHub.spawner_class = "kubespawner.KubeSpawner"
+      c.KubeSpawner.allow_privilege_escalation = True
+      c.KubeSpawner.args = ['--allow-root']
+      c.KubeSpawner.uid = 0
+      c.KubeSpawner.profile_list = [
+        {
+          'display_name': 'Python DataScience',
+          'slug': 'datascience-small',
+          'profile_options': {
+            'memory': {
+              'display_name': 'CPUs',
+              'choices': {
+                '2': {
+                  'display_name': '2 CPUs',
+                  'kubespawner_override': {
+                    'cpu_limit': 2,
+                    'cpu_guarantee': 2,
+                    'mem_guarantee': '8G',
+                    'mem_limit': '8G',
+                  }
+                },
+                '4': {
+                  'display_name': '4 CPUs',
+                  'kubespawner_override': {
+                    'cpu_limit': 4,
+                    'cpu_guarantee': 4,
+                    'mem_guarantee': '8G',
+                    'mem_limit': '8G',
+                  }
+                },
+                '12': {
+                  'display_name': '12 CPUs',
+                  'kubespawner_override': {
+                    'cpu_limit': 12,
+                    'cpu_guarantee': 12,
+                    'mem_guarantee': '64G',
+                    'mem_limit': '64G',
+                  }
+                },
+              }
+            },
+          },
+          'kubespawner_override': {
+            'image': 'jupyter/datascience-notebook:python-3.10',
+          }
+        }, {
+          'display_name': 'Python DataScience - Small GPU instance (CPUx4, GPUx1)',
+          'slug': 'datascience-gpu1x',
+          'kubespawner_override': {
+            'image': 'jupyter/datascience-notebook:python-3.10',
+            'cpu_limit': 4,
+            'mem_limit': '64G',
+            'extra_resource_limits': {"nvidia.com/gpu": "1"},
+            'extra_resource_guarantees': {"nvidia.com/gpu": "1"},
+          },
+        },
+      ]
+cull:
+  enabled: false
+debug:
+  enabled: true

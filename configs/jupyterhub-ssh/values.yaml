@@ -1,0 +1,46 @@
+hubUrl: "https://saiacheron.cttc.es"
+hostKey: |
+  -----BEGIN PRIVATE KEY-----
+  XXX
+  -----END PRIVATE KEY-----
+nameOverride: ""
+fullnameOverride: "jupyterhub"
+
+ssh:
+  enabled: true
+  replicaCount: 1
+
+  config:
+    JupyterHubSSH:
+      debug: true
+      host_key_path: /etc/jupyterhub-ssh/config/hostKey
+
+  image:
+    pullPolicy: ""
+    repository: 5uperpalo/jupyterhub-ssh-ssl-disabled
+    tag: "0.0.1"
+
+  service:
+    type: ClusterIP
+    port: 22
+
+  podLabels:
+    hub.jupyter.org/network-access-hub: "true"
+    hub.jupyter.org/network-access-proxy-http: "true"
+  podAnnotations: {}
+  serviceLabels: {}
+  serviceAnnotations: {}
+
+  resources: {}
+  imagePullSecrets: []
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  networkPolicy:
+    ingress:
+      - ports:
+        - protocol: TCP
+          port: ssh
+sftp:
+  enabled: false
+global: {}

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: ingress
+data:
+  22022: "sai/jupyterhub-ssh:22"

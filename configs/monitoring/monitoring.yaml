@@ -1,0 +1,57 @@
+alertmanager:
+  ingress:
+    enabled: true
+    annotations:
+      #kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts: ['alertmanager.kubernetes.local']
+    paths: ['/']
+    tls:
+    - secretName: tls-credential
+      hosts:
+      - alertmanager.kubernetes.local
+    spec:
+      ingressClassName: nginx
+  alertmanagerSpec: 
+    externalUrl: https://alertmanager.kubernetes.local/
+    routePrefix: "/" # does not need alertmanager suffix
+    #service:
+    #type: NodePort
+grafana:
+  # username is 'admin'
+  adminPassword: prom-operator
+  ingress:
+    enabled: true
+    annotations:
+      #kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts: ['grafana.kubernetes.local']
+    path: "/"
+    tls:
+    - secretName: tls-credential
+      hosts:
+      - grafana.kubernetes.local
+    spec:
+      ingressClassName: nginx
+      #service:
+    #type: NodePort
+prometheus:
+  ingress:
+    enabled: true
+    #annotations:
+      #      kubernetes.io/ingress.class: nginx
+    hosts: ['prometheus.kubernetes.local']
+    paths: ['/'] # does not need regex capture like others
+    tls:
+    - secretName: tls-credential
+      hosts:
+      - prometheus.kubernetes.local
+    spec:
+      ingressClassName: nginx
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    externalUrl: "https://prometheus.kubernetes.local/prometheus"
+    routePrefix: /
+    #service:
+    #type: NodePort
